@@ -96,23 +96,19 @@ def add_drink(payload):
 '''
 @app.route('/drinks/<int:id>', methods=['PATCH'])
 @requires_auth('patch:drinks')
-def update_drink(payload,id):
+def update_drink(payload, id):
     try:
-        req = request.get_json()
-        title = req.get('title')
-        recipe = req.get('recipe')
-        drink = Drink.query.filter_by(id=id).one_or_none()
-        if drink is None or title is None:
-            abort(401)
-        else:
-            drink.title = title
-            drink.recipe = json.dumps(recipe)
-            drink.update()
-        new_drink = Drink.query.filter_by(id=id).first().long()
+        body = request.get_json()
+        drink_updated = Drink.query.get(id)
+        drink_updated.title = body.get('title')
+        drink_updated.recipe = json.dumps(body.get('recipe'))
+        drink_updated.update()
+
         return jsonify({
             'success': True,
-            'drinks': new_drink
-        }),200
+            'drinks': [drink_updated.long()]
+        })
+
     except:
         abort(401)
 
@@ -180,7 +176,7 @@ def resource_not_found(error):
 @app.errorhandler(401)
 def auth_error(error):
     return jsonify({
-        "success": False, 
-        "error": 401,
-        "message": "Unathorized"
-    }), 401
+            "success": False, 
+            "error": 401,
+            "message": "Unathorized"
+        }), 401

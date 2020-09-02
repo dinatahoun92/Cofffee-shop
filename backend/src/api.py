@@ -180,7 +180,7 @@ def resource_not_found(error):
 @app.errorhandler(401)
 def auth_error(error):
     return jsonify({
-            "success": False, 
-            "error": 401,
-            "message": "Unathorized"
-        }), 401
+        "success": False, 
+        "error": 401,
+        "message": "Unathorized"
+    }), 401
